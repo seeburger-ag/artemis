@@ -846,7 +846,7 @@ public class ServerSessionPacketHandler implements ChannelHandler {
                                                                      ServerSession session) {
       session.markTXFailed(e);
       if (requiresResponse) {
-         logger.debug("Sending exception to client", e);
+         ActiveMQServerLogger.LOGGER.sendingUnexpectedExceptionToClient(e);
          response = convertToExceptionPacket(packet, e);
       } else {
          ActiveMQServerLogger.LOGGER.caughtException(e);
@@ -859,7 +859,7 @@ public class ServerSessionPacketHandler implements ChannelHandler {
                                                                 boolean requiresResponse,
                                                                 Packet response) {
       if (requiresResponse) {
-         logger.debug("Sending exception to client", e);
+         ActiveMQServerLogger.LOGGER.sendingUnexpectedExceptionToClient(e);
          if (packet.isResponseAsync()) {
             response = new SessionXAResponseMessage_V2(packet.getCorrelationID(), true, e.errorCode, e.getMessage());
          } else {
@@ -876,7 +876,7 @@ public class ServerSessionPacketHandler implements ChannelHandler {
                                                                                  boolean requiresResponse,
                                                                                  Packet response) {
       if (requiresResponse) {
-         logger.debug("Sending exception to client", e);
+         ActiveMQServerLogger.LOGGER.sendingUnexpectedExceptionToClient(e);
          response = convertToExceptionPacket(packet, e);
       } else {
          ActiveMQServerLogger.LOGGER.caughtException(e);
@@ -899,7 +899,7 @@ public class ServerSessionPacketHandler implements ChannelHandler {
                                                               boolean requiresResponse,
                                                               Packet response) {
       if (requiresResponse) {
-         logger.debug("Sending exception to client", e);
+         ActiveMQServerLogger.LOGGER.sendingUnexpectedExceptionToClient(e);
          response = convertToExceptionPacket(packet, e);
       } else {
          if (e.getType() == ActiveMQExceptionType.QUEUE_EXISTS) {
