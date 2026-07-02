@@ -53,7 +53,7 @@ public class InVMConnection implements Connection {
 
    private final String id;
 
-   private boolean closed;
+   private volatile boolean closed;
 
    // Used on tests
    private static boolean flushEnabled = true;
@@ -146,18 +146,21 @@ public class InVMConnection implements Connection {
    }
 
    private void internalClose(boolean failed) {
-      if (closing) {
-         return;
-      }
-
-      closing = true;
-
+      // Fully atomic: the check, the destroy callback and the state transition
+      // all happen while holding the monitor. This guarantees connectionDestroyed
+      // is fired exactly once and that no caller of close()/disconnect() can
+      // return before the destroy callback has actually run (no lock-free
+      // fast-path that could let a concurrent caller observe a half-done close).
       synchronized (this) {
-         if (!closed) {
-            listener.connectionDestroyed(id, failed);
-
-            closed = true;
+         if (closed) {
+            return;
          }
+
+         closing = true;
+
+         listener.connectionDestroyed(id, failed);
+
+         closed = true;
       }
    }
 

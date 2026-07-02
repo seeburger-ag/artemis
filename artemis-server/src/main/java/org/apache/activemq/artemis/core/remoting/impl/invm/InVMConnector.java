@@ -214,7 +214,7 @@ public class InVMConnector extends AbstractConnector {
       return handler;
    }
 
-   public void disconnect(final String connectionID) {
+   public void disconnect(final String connectionID, final boolean failed) {
       if (!started) {
          return;
       }
@@ -222,7 +222,13 @@ public class InVMConnector extends AbstractConnector {
       Connection conn = connections.get(connectionID);
 
       if (conn != null) {
-         conn.close();
+         // Preserve the graceful/failure semantics coming from the other side of
+         // the InVM connection instead of always signalling a graceful close.
+         if (failed) {
+            conn.disconnect();
+         } else {
+            conn.close();
+         }
       }
    }
 
@@ -267,7 +273,7 @@ public class InVMConnector extends AbstractConnector {
       public void connectionDestroyed(final Object connectionID, boolean failed) {
          if (connections.remove(connectionID) != null) {
             // Close the corresponding connection on the other side
-            acceptor.disconnect((String) connectionID);
+            acceptor.disconnect((String) connectionID, failed);
 
             // Execute on different thread to avoid deadlocks
             closeExecutor.execute(() -> listener.connectionDestroyed(connectionID, failed));

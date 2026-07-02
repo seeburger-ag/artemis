@@ -848,7 +848,13 @@ public class RemotingServiceImpl implements RemotingService, ServerConnectionLif
    private void issueClose(Object connectionID) {
       ConnectionEntry conn = connections.get(connectionID);
 
-      if (conn != null && !conn.connection.isSupportReconnect()) {
+      // A graceful close is an explicit teardown of the connection, so it must
+      // always be removed. Unlike a failure (see issueClose's counterpart
+      // issueFailure), reconnect/reattach support must NOT keep a gracefully
+      // closed connection around, otherwise it would linger in the connections
+      // map until the connection-ttl reaper eventually removes it (or forever
+      // when ttl is disabled).
+      if (conn != null) {
          RemotingConnection removedConnection = removeConnection(connectionID);
          if (removedConnection != null) {
             try {
