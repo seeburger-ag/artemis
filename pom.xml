@@ -20,7 +20,7 @@
    <groupId>org.apache.artemis</groupId>
    <artifactId>artemis-project</artifactId>
    <packaging>pom</packaging>
-   <version>2.57.1-SNAPSHOT</version>
+   <version>2.57.0.SEE1</version>
 
    <parent>
       <groupId>org.apache</groupId>
@@ -281,14 +281,15 @@
 
       <fast-tests>false</fast-tests>
 
-      <project.build.outputTimestamp>2026-09-09T16:38:01Z</project.build.outputTimestamp>
+      <project.build.outputTimestamp>2026-09-15T10:29:07Z</project.build.outputTimestamp>
    </properties>
 
    <scm>
       <connection>scm:git:git@github.com:seeburger-ag/activemq-artemis.git</connection>
       <developerConnection>scm:git:git@github.com:seeburger-ag/activemq-artemis.git</developerConnection>
       <url>https://github.com/seeburger-ag/activemq-artemis</url>
-   </scm>
+     <tag>2.57.0.SEE1</tag>
+  </scm>
 
    <distributionManagement>
       <site>
